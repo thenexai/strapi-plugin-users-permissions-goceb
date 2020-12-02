@@ -163,8 +163,7 @@ module.exports = {
           firebaseToken: firebaseToken,
           jwt: strapi.plugins['users-permissions'].services.jwt.issue({
             id: user.id,
-            sid: session.id, // Yoo.cash Add session to jwt
-            firebaseToken: firebaseToken,
+            sid: session.id // Yoo.cash Add session to jwt
           }),
           user: sanitizeEntity(user.toJSON ? user.toJSON() : user, {
             model: strapi.query('user', 'users-permissions').model,
@@ -217,8 +216,7 @@ module.exports = {
         firebaseToken: firebaseToken,
         jwt: strapi.plugins['users-permissions'].services.jwt.issue({
           id: user.id,
-          sid: session.id, // Yoo.cash Add session to jwt
-          firebaseToken: firebaseToken,
+          sid: session.id // Yoo.cash Add session to jwt
         }),
         user: sanitizeEntity(user.toJSON ? user.toJSON() : user, {
           model: strapi.query('user', 'users-permissions').model,
@@ -557,8 +555,7 @@ module.exports = {
       // Yoo.cash End: creating session
 
       const jwt = strapi.plugins['users-permissions'].services.jwt.issue(Object.assign({}, _.pick(user.toJSON ? user.toJSON() : user, ['id']), {
-        sid: session.id, // Yoo.cash Add session to jwt
-        firebaseToken: firebaseToken,
+        sid: session.id // Yoo.cash Add session to jwt
       }));
 
       if (settings.email_confirmation) {
