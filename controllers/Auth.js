@@ -19,6 +19,15 @@ const formatError = error => [
   { messages: [{ id: error.id, message: error.message, field: error.field }] },
 ];
 
+
+// load firebase admin
+// var serviceAccount = require("path/to/serviceAccountKey.json");
+admin.initializeApp({
+  // credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.applicationDefault(),
+  databaseURL: "https://goceb-com.firebaseio.com"
+});
+
 module.exports = {
   async callback(ctx) {
     const provider = ctx.params.provider || 'local';
@@ -28,14 +37,6 @@ module.exports = {
       environment: '',
       type: 'plugin',
       name: 'users-permissions',
-    });
-
-    // load firebase admin
-    // var serviceAccount = require("path/to/serviceAccountKey.json");
-    admin.initializeApp({
-      // credential: admin.credential.cert(serviceAccount),
-      credential: admin.credential.applicationDefault(),
-      databaseURL: "https://goceb-com.firebaseio.com"
     });
 
     if (provider === 'local') {
@@ -141,6 +142,7 @@ module.exports = {
       } else {
         // Yoo.cash Start: creating session
         let session;
+        let firebaseToken
         if (user && user.id) {
           session = await strapi.services.session.create({
             blocked: false,
@@ -149,9 +151,11 @@ module.exports = {
           session = sanitizeEntity(session, {
             model: strapi.models.session
           });
+
+          // create firebase session
+          firebaseToken = await admin.auth().createCustomToken(user.id.toString());
         }
 
-        const firebaseToken = await admin.auth().createCustomToken(user.id);
         // Yoo.cash End: creating session
 
         ctx.send({
@@ -195,6 +199,7 @@ module.exports = {
 
       // Yoo.cash Start: creating session
       let session;
+      let firebaseToken;
       if (user && user.id) {
         session = await strapi.services.session.create({
           blocked: false,
@@ -203,8 +208,8 @@ module.exports = {
         session = sanitizeEntity(session, {
           model: strapi.models.session
         });
+        firebaseToken = await admin.auth().createCustomToken(user.id.toString());
       }
-      const firebaseToken = await admin.auth().createCustomToken(user.id);
       // Yoo.cash End: creating session
 
       ctx.send({
@@ -538,6 +543,7 @@ module.exports = {
 
       // Yoo.cash Start: creating session
       let session;
+      let firebaseToken;
       if (user && user.id) {
         session = await strapi.services.session.create({
           blocked: false,
@@ -546,8 +552,8 @@ module.exports = {
         session = sanitizeEntity(session, {
           model: strapi.models.session
         });
+        firebaseToken = await admin.auth().createCustomToken(user.id.toString());
       }
-      const firebaseToken = await admin.auth().createCustomToken(user.id);
       // Yoo.cash End: creating session
 
       const jwt = strapi.plugins['users-permissions'].services.jwt.issue(Object.assign({}, _.pick(user.toJSON ? user.toJSON() : user, ['id']), {
